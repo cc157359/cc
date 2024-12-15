@@ -247,10 +247,15 @@
             background: radial-gradient(circle, rgba(255,105,180,0.9) 0%, rgba(255,105,180,0.5) 50%, transparent 100%);
         }
         
-        /* 添加移动端适配 */
+        /* 添加新的移动端适配 */
         @media (max-width: 768px) {
+            body {
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+            }
+            
             .heart {
-                font-size: 150px;  /* 进一步减小爱心大小 */
+                font-size: 150px;
             }
             
             .heart::before {
@@ -266,15 +271,6 @@
                 padding: 0 10px;
             }
             
-            @keyframes floatingText {
-                0%, 100% {
-                    transform: translateX(-50%) translateY(-120px);
-                }
-                50% {
-                    transform: translateX(-50%) translateY(-130px);
-                }
-            }
-            
             .background-text {
                 font-size: 30px;
             }
@@ -283,7 +279,6 @@
                 margin: 0 8px;
             }
             
-            /* 优化移动端的emoji效果 */
             .emoji-explosion {
                 font-size: 24px;
             }
@@ -291,8 +286,8 @@
             .emoji {
                 font-size: 16px;
             }
-
-            /* 禁用移动端不需要的效果 */
+            
+            /* 禁用鼠标相关效果 */
             .custom-cursor,
             .cursor-trail {
                 display: none;
@@ -301,85 +296,11 @@
             * {
                 cursor: auto !important;
             }
-
-            /* 优化移动端点击区域 */
-            .heart {
-                padding: 20px;  /* 增加可点击区域 */
-            }
-
-            /* 优化移动端动画性能 */
-            .background-text {
-                transform: rotate(0deg) !important;  /* 移除倾斜效果以提升性能 */
-            }
-        }
-
-        /* 添加横屏处理 */
-        @media screen and (orientation: landscape) and (max-width: 900px) {
-            body::before {
-                content: '请旋转屏幕至竖屏浏览';
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: #fff8f8;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                color: #ff69b4;
-                z-index: 10000;
-                padding: 20px;
-                text-align: center;
-            }
             
-            /* 横屏时隐藏主要内容 */
-            .background-text,
-            .heart,
-            .floating-text,
-            .emoji-explosion,
-            .emoji {
-                display: none !important;
-            }
-        }
-
-        /* 优化竖屏显示 */
-        @media screen and (orientation: portrait) and (max-width: 768px) {
-            .heart {
-                font-size: 150px;
-            }
-            
-            .background-text {
-                font-size: 24px;
-            }
-            
-            /* ... 其他移动端样式保持不变 ... */
-        }
-
-        /* 添加强制横屏样式 */
-        @media screen and (orientation: portrait) {
-            body {
-                transform: rotate(90deg);
-                transform-origin: left top;
-                width: 100vh;
-                height: 100vw;
-                position: absolute;
-                top: 100%;
-                left: 0;
-            }
-            
-            .heart {
-                font-size: 200px;
-            }
-            
-            .floating-text {
-                font-size: 30px;
-                letter-spacing: 15px;
-                transform: translateX(-50%) translateY(-150px);
-            }
-            
-            .background-text {
-                font-size: 40px;
+            /* 移除倾斜效果 */
+            .background-text.left,
+            .background-text.right {
+                transform: none !important;
             }
         }
     </style>
@@ -730,7 +651,7 @@
             }, 100);
         });
 
-        // 添加鼠标离开页面时的处理
+        // 添加鼠��离开页面时的处理
         document.addEventListener('mouseleave', () => {
             cursor.style.opacity = '0';
             trails.forEach(trail => {
@@ -744,46 +665,27 @@
             cursor.style.opacity = '1';
         });
 
-        // 检测是否为移动设备
+        // 修改移动端检测和处理
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // 移动端点击事件处理
-            document.querySelector('.heart').addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                // 触发原有的点击事件处理函数
-                this.click();
-            });
-            
-            // 禁用移动端的鼠标移动相关效果
+            // 移除鼠标移动事件
             document.removeEventListener('mousemove', mouseMoveHandler);
-        }
-
-        // 优化移动端触摸事件
-        if (isMobile) {
+            
             const heart = document.querySelector('.heart');
             
-            // 移除所有鼠标相关事件
-            document.removeEventListener('mousemove', mouseMoveHandler);
-            
-            // 优化触摸事件
+            // 添加触摸事件
             heart.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 this.click();
-            }, { passive: false });
-
-            // 禁用双击缩放
-            document.addEventListener('touchstart', function(e) {
+            });
+            
+            // 防止页面缩放
+            document.addEventListener('touchmove', function(e) {
                 if (e.touches.length > 1) {
                     e.preventDefault();
                 }
             }, { passive: false });
-
-            // 禁用页面滚动
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-            document.body.style.height = '100%';
         }
     </script>
 </body>
