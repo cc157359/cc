@@ -122,8 +122,8 @@
             white-space: nowrap;
             left: 50%;
             transform: translateX(-50%) translateY(-350px);
-            opacity: 0;  /* 初始设置为不可见 */
-            transition: opacity 1s ease-in-out;  /* 添加淡入效果 */
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
         }
 
         @keyframes floatingText {
@@ -266,7 +266,7 @@
             .floating-text {
                 font-size: 24px;
                 letter-spacing: 10px;
-                transform: translateX(-50%) translateY(-120px);
+                transform: translateX(-50%) translateY(-100px);
                 width: 90vw;
                 padding: 0 10px;
             }
@@ -496,7 +496,11 @@
             });
             
             if (clickCount === 15) {
-                document.querySelector('.floating-text').style.opacity = '1';
+                const floatingText = document.querySelector('.floating-text');
+                floatingText.style.opacity = '1';
+                if (isMobile) {
+                    floatingText.style.transform = 'translateX(-50%) translateY(-100px)';
+                }
                 createFireworks();
             }
             
@@ -651,7 +655,7 @@
             }, 100);
         });
 
-        // 添加鼠��离开页面时的处理
+        // 添加鼠标离开页面时的处理
         document.addEventListener('mouseleave', () => {
             cursor.style.opacity = '0';
             trails.forEach(trail => {
