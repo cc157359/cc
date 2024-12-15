@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爱心页面</title>
+    <style>
+        /* 添加全局文本选择禁用 */
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        body {
+            background-color: #fff8f8;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .background-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            color: #ffe6ee;
+            white-space: nowrap;
+        }
+        .background-text.left {
+            transform: rotate(-10deg);
+        }
+        .background-text.right {
+            transform: rotate(10deg);
+        }
+        .background-row {
+            position: absolute;
+            display: flex;
+            animation: slideText 20s linear infinite;
+        }
+        .background-row span {
+            margin: 0 15px;
+            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.3);
+        }
+        .background-text.right .background-row span {
+            color: #ffd7e5;  /* 稍微淡一点的颜色 */
+        }
+        .background-row:nth-child(even) {
+            animation-direction: reverse;
+        }
+        .heart {
+            font-size: 500px;
+            animation: heartbeat 1.4s infinite;
+            text-shadow: 
+                0 0 30px white,
+                0 0 60px white,
+                0 0 90px white;
+            filter: drop-shadow(0 0 15px rgba(255, 182, 193, 0.7));
+            position: relative;
+            z-index: 2;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            cursor: pointer;
+        }
+        .heart::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%);
+            z-index: -1;
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes slideText {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        .row-content {
+            display: flex;
+            white-space: nowrap;
+        }
+        .row-content:last-child {
+            position: absolute;
+            left: 100%;
+            top: 0;
+        }
+        .floating-text {
+            position: absolute;
+            font-size: 70px;
+            color: #ff69b4;
+            text-shadow: 
+                0 0 10px white,
+                0 0 20px #ff69b4;
+            animation: floatingText 2s ease-in-out infinite;
+            z-index: 3;
+            font-weight: bold;
+            font-family: KaiTi, '楷体', STKaiti, '华文楷体', serif;
+            background: linear-gradient(to right, #ff69b4, #ff1493);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 30px;
+            padding: 0 30px;
+            width: 98vw;
+            text-align: center;
+            white-space: nowrap;
+            left: 50%;
+            transform: translateX(-50%) translateY(-350px);
+            opacity: 0;  /* 初始设置为不可见 */
+            transition: opacity 1s ease-in-out;  /* 添加淡入效果 */
+        }
+
+        @keyframes floatingText {
+            0%, 100% {
+                transform: translateX(-50%) translateY(-350px);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-370px);
+            }
+        }
+        
+        .emoji {
+            position: fixed;
+            pointer-events: none;
+            font-size: 25px;  /* 稍微调大一点 */
+            animation: floatUp 1.2s ease-out forwards;  /* 放慢一点动画 */
+            z-index: 9999;
+            transform-origin: center;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1) rotate(-15deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-50px) scale(1.2) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-120px) scale(0.8) rotate(15deg);
+                opacity: 0;
+            }
+        }
+        
+        .ripple {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        /* 添加点击特效相关样式 */
+        .heart-burst,
+        .heart-particle {
+            display: none;
+        }
+        
+        .ripple {
+            background: radial-gradient(circle, rgba(255,105,180,0.8) 0%, rgba(255,105,180,0) 70%) !important;
+            mix-blend-mode: screen;
+        }
+        
+        /* 移除点击计数器相关样式 */
+        .click-counter {
+            display: none;
+        }
+        
+        .emoji-explosion {
+            position: fixed;
+            font-size: 40px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: bounceEmoji 1s ease-in-out infinite;
+            transition: opacity 0.5s ease-out;
+        }
+
+        @keyframes bounceEmoji {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.1);
+            }
+        }
+        
+        /* 添加点击跃动动画 */
+        @keyframes heartJump {
+            0% { transform: scale(1) translateY(0); }
+            30% { transform: scale(1.2) translateY(-20px); }
+            50% { transform: scale(1.1) translateY(-10px); }
+            70% { transform: scale(1.15) translateY(-15px); }
+            100% { transform: scale(1) translateY(0); }
+        }
+
+        .heart-jump {
+            animation: heartJump 0.5s ease-in-out;
+        }
+        
+        /* 添加自定义鼠标样式 */
+        * {
+            cursor: none;  /* 隐藏默认鼠标 */
+        }
+        
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(255,105,180,0.8) 0%, rgba(255,105,180,0.4) 50%, transparent 100%);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+            box-shadow: 0 0 10px rgba(255,105,180,0.5);
+        }
+        
+        .cursor-trail {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,105,180,0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.1s, opacity 0.3s;
+        }
+
+        .heart:hover ~ .custom-cursor {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(255,105,180,0.9) 0%, rgba(255,105,180,0.5) 50%, transparent 100%);
+        }
+        
+        /* 添加移动端适配 */
+        @media (max-width: 768px) {
+            .heart {
+                font-size: 200px;  /* 减小爱心大小 */
+            }
+            
+            .heart::before {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .floating-text {
+                font-size: 30px;
+                letter-spacing: 15px;
+                transform: translateX(-50%) translateY(-150px);
+            }
+            
+            @keyframes floatingText {
+                0%, 100% {
+                    transform: translateX(-50%) translateY(-150px);
+                }
+                50% {
+                    transform: translateX(-50%) translateY(-170px);
+                }
+            }
+            
+            .background-text {
+                font-size: 40px;
+            }
+            
+            /* 在移动端禁用鼠标相关效果 */
+            .custom-cursor,
+            .cursor-trail {
+                display: none;
+            }
+            
+            * {
+                cursor: auto !important;  /* 恢复默认光标 */
+            }
+            
+            /* 调整emoji大小 */
+            .emoji-explosion {
+                font-size: 30px;
+            }
+            
+            .emoji {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-text left">
+        <div class="background-row" style="top: 0%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 16.6%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 33.2%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 49.8%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 66.4%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 83%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+    </div>
+    <div class="background-text right">
+        <div class="background-row" style="top: 0%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 16.6%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 33.2%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 49.8%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 66.4%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+        <div class="background-row" style="top: 83%">
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+            <div class="row-content">
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+                <span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span><span>L O V E</span>
+            </div>
+        </div>
+    </div>
+    <div class="floating-text">段志芳宝宝天下第一最最好</div>
+    <div class="heart">💗</div>
+    <div class="click-counter"></div>
+    <div class="custom-cursor"></div>
+    <script>
+        let clickCount = 0;
+        let lastClickTime = 0;
+        const CLICK_TIMEOUT = 2000;
+        
+        document.querySelector('.heart').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const currentTime = Date.now();
+            
+            if (currentTime - lastClickTime > CLICK_TIMEOUT) {
+                clickCount = 0;
+            }
+            
+            clickCount++;
+            lastClickTime = currentTime;
+            
+            // 添加跃动效果
+            this.classList.remove('heart-jump');  // 移除之前的动画类
+            void this.offsetWidth;  // 触发重绘
+            this.classList.add('heart-jump');  // 添加动画类
+            
+            // 动画结束后移除类
+            this.addEventListener('animationend', function() {
+                this.classList.remove('heart-jump');
+            }, { once: true });  // 只执行一次
+            
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.cssText = `
+                position: absolute;
+                width: 100px;
+                height: 100px;
+                background: radial-gradient(circle, rgba(255,192,203,0.8) 0%, rgba(255,192,203,0) 70%);
+                border-radius: 50%;
+                pointer-events: none;
+                transform: translate(-50%, -50%);
+                animation: ripple 0.5s ease-out forwards;
+                user-select: none;
+                -webkit-user-select: none;
+            `;
+            ripple.style.left = '50%';
+            ripple.style.top = '50%';
+            this.appendChild(ripple);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: translate(-50%, -50%) scale(2);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+                style.remove();
+            });
+            
+            if (clickCount === 15) {
+                document.querySelector('.floating-text').style.opacity = '1';
+                createFireworks();
+            }
+            
+            if (clickCount % 10 === 0) {
+                createEmojiExplosion();
+            }
+        });
+        
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+        });
+        
+        function createFireworks() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.style.cssText = `
+                        position: fixed;
+                        width: 10px;
+                        height: 10px;
+                        background: radial-gradient(circle, #ff69b4, #ff1493);
+                        border-radius: 50%;
+                        pointer-events: none;
+                    `;
+                    
+                    const startX = Math.random() * window.innerWidth;
+                    const startY = window.innerHeight;
+                    const endX = Math.random() * window.innerWidth;
+                    const endY = Math.random() * (window.innerHeight * 0.5);
+                    
+                    firework.style.left = startX + 'px';
+                    firework.style.top = startY + 'px';
+                    
+                    document.body.appendChild(firework);
+                    
+                    firework.animate([
+                        { transform: 'translate(0, 0)', opacity: 1 },
+                        { transform: `translate(${endX - startX}px, ${endY - startY}px)`, opacity: 0 }
+                    ], {
+                        duration: 1000,
+                        easing: 'ease-out'
+                    }).onfinish = () => firework.remove();
+                }, i * 200);
+            }
+        }
+
+        // 添加鼠标移动的emoji效果
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() < 0.08) { // 稍微降低生成频率
+                const emoji = document.createElement('div');
+                emoji.className = 'emoji';
+                emoji.textContent = '😚';
+                
+                // 随机一点位置偏移，让效果更自然
+                const offsetX = (Math.random() - 0.5) * 20;
+                const offsetY = (Math.random() - 0.5) * 20;
+                
+                emoji.style.left = (e.clientX - 12 + offsetX) + 'px';
+                emoji.style.top = (e.clientY - 12 + offsetY) + 'px';
+                
+                document.body.appendChild(emoji);
+                
+                emoji.addEventListener('animationend', function() {
+                    document.body.removeChild(emoji);
+                });
+            }
+        });
+
+        function createEmojiExplosion() {
+            // 清除现有的emoji
+            document.querySelectorAll('.emoji-explosion').forEach(el => el.remove());
+            
+            const emojis = ['😘', '😚', '🥰', '😍', '💕', '💖', '💝', '💗'];
+            const count = 50; // 增加emoji数量
+            
+            for (let i = 0; i < count; i++) {
+                const emojiEl = document.createElement('div');
+                emojiEl.className = 'emoji-explosion';
+                // 随机选择一个emoji
+                emojiEl.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                // 随机位置
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                
+                // 随机大小
+                const scale = 0.8 + Math.random() * 0.6;
+                
+                // 随机动画延迟
+                const delay = Math.random() * 2;
+                const duration = 0.8 + Math.random() * 0.4;
+                
+                emojiEl.style.cssText = `
+                    left: ${x}px;
+                    top: ${y}px;
+                    font-size: ${40 * scale}px;
+                    animation: bounceEmoji ${duration}s ease-in-out infinite;
+                    animation-delay: ${delay}s;
+                `;
+                
+                document.body.appendChild(emojiEl);
+                
+                // 添加初始动画
+                emojiEl.animate([
+                    { transform: 'scale(0) rotate(-180deg)', opacity: 0 },
+                    { transform: 'scale(1) rotate(0deg)', opacity: 1 }
+                ], {
+                    duration: 500,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    delay: delay * 100
+                });
+            }
+            
+            // 3秒后淡出所有emoji
+            setTimeout(() => {
+                document.querySelectorAll('.emoji-explosion').forEach(el => {
+                    el.style.opacity = '0';
+                    setTimeout(() => el.remove(), 500);
+                });
+            }, 3000);
+        }
+        
+        // 添加自定义鼠标跟随效果
+        const cursor = document.querySelector('.custom-cursor');
+        const trails = [];
+        const maxTrails = 5;
+
+        document.addEventListener('mousemove', (e) => {
+            // 更新主光标位置
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            // 创建拖尾效果
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = e.clientX + 'px';
+            trail.style.top = e.clientY + 'px';
+            document.body.appendChild(trail);
+            trails.push(trail);
+            
+            // 限制拖尾数量
+            if (trails.length > maxTrails) {
+                const oldTrail = trails.shift();
+                oldTrail.style.opacity = '0';
+                setTimeout(() => oldTrail.remove(), 300);
+            }
+            
+            // 为每个拖尾添加消失动画
+            setTimeout(() => {
+                trail.style.opacity = '0';
+                setTimeout(() => trail.remove(), 300);
+            }, 100);
+        });
+
+        // 添加鼠标离开页面时的处理
+        document.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '0';
+            trails.forEach(trail => {
+                trail.style.opacity = '0';
+                setTimeout(() => trail.remove(), 300);
+            });
+            trails.length = 0;
+        });
+
+        document.addEventListener('mouseenter', () => {
+            cursor.style.opacity = '1';
+        });
+
+        // 检测是否为移动设备
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // 移动端点击事件处理
+            document.querySelector('.heart').addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                // 触发原有的点击事件处理函数
+                this.click();
+            });
+            
+            // 禁用移动端的鼠标移动相关效果
+            document.removeEventListener('mousemove', mouseMoveHandler);
+        }
+    </script>
+</body>
+</html> 
