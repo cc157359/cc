@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>爱心页面</title>
     <style>
         /* 添加全局文本选择禁用 */
@@ -250,50 +250,66 @@
         /* 添加移动端适配 */
         @media (max-width: 768px) {
             .heart {
-                font-size: 200px;  /* 减小爱心大小 */
+                font-size: 150px;  /* 进一步减小爱心大小 */
             }
             
             .heart::before {
-                width: 300px;
-                height: 300px;
+                width: 200px;
+                height: 200px;
             }
             
             .floating-text {
-                font-size: 30px;
-                letter-spacing: 15px;
-                transform: translateX(-50%) translateY(-150px);
+                font-size: 24px;
+                letter-spacing: 10px;
+                transform: translateX(-50%) translateY(-120px);
+                width: 90vw;
+                padding: 0 10px;
             }
             
             @keyframes floatingText {
                 0%, 100% {
-                    transform: translateX(-50%) translateY(-150px);
+                    transform: translateX(-50%) translateY(-120px);
                 }
                 50% {
-                    transform: translateX(-50%) translateY(-170px);
+                    transform: translateX(-50%) translateY(-130px);
                 }
             }
             
             .background-text {
-                font-size: 40px;
+                font-size: 30px;
             }
             
-            /* 在移动端禁用鼠标相关效果 */
+            .background-row span {
+                margin: 0 8px;
+            }
+            
+            /* 优化移动端的emoji效果 */
+            .emoji-explosion {
+                font-size: 24px;
+            }
+            
+            .emoji {
+                font-size: 16px;
+            }
+
+            /* 禁用移动端不需要的效果 */
             .custom-cursor,
             .cursor-trail {
                 display: none;
             }
             
             * {
-                cursor: auto !important;  /* 恢复默认光标 */
+                cursor: auto !important;
             }
-            
-            /* 调整emoji大小 */
-            .emoji-explosion {
-                font-size: 30px;
+
+            /* 优化移动端点击区域 */
+            .heart {
+                padding: 20px;  /* 增加可点击区域 */
             }
-            
-            .emoji {
-                font-size: 20px;
+
+            /* 优化移动端动画性能 */
+            .background-text {
+                transform: rotate(0deg) !important;  /* 移除倾斜效果以提升性能 */
             }
         }
     </style>
@@ -671,6 +687,33 @@
             
             // 禁用移动端的鼠标移动相关效果
             document.removeEventListener('mousemove', mouseMoveHandler);
+        }
+
+        // 优化移动端触摸事件
+        if (isMobile) {
+            const heart = document.querySelector('.heart');
+            
+            // 移除所有鼠标相关事件
+            document.removeEventListener('mousemove', mouseMoveHandler);
+            
+            // 优化触摸事件
+            heart.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                this.click();
+            }, { passive: false });
+
+            // 禁用双击缩放
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // 禁用页面滚动
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.height = '100%';
         }
     </script>
 </body>
