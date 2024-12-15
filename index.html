@@ -303,6 +303,38 @@
                 transform: none !important;
             }
         }
+        
+        /* 修改樱花花瓣样式 */
+        .sakura {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1;
+            font-size: 15px;
+            animation: fall linear, rotate ease-in-out infinite;
+        }
+        
+        .sakura::after {
+            content: '🌸';
+            opacity: 0.7;
+        }
+        
+        @keyframes fall {
+            from {
+                transform: translateY(-50vh) translateX(-20px);
+            }
+            to {
+                transform: translateY(100vh) translateX(100px);
+            }
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -690,6 +722,46 @@
                     e.preventDefault();
                 }
             }, { passive: false });
+        }
+        
+        // 修改樱花创建函数
+        function createSakura() {
+            const sakura = document.createElement('div');
+            sakura.className = 'sakura';
+            
+            // 随机起始位置
+            const startX = Math.random() * window.innerWidth;
+            
+            // 随机大小
+            const size = 10 + Math.random() * 15;
+            
+            // 随机动画时间
+            const fallDuration = 6 + Math.random() * 4;
+            const rotateDuration = 3 + Math.random() * 2;
+            
+            sakura.style.cssText = `
+                left: ${startX}px;
+                top: -50px;
+                font-size: ${size}px;
+                animation: 
+                    fall ${fallDuration}s linear forwards,
+                    rotate ${rotateDuration}s linear infinite;
+            `;
+            
+            document.body.appendChild(sakura);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                sakura.remove();
+            }, fallDuration * 1000);
+        }
+        
+        // 定期创建樱花
+        setInterval(createSakura, 500);  // 降低生成频率
+        
+        // 初始创建一些樱花
+        for(let i = 0; i < 10; i++) {
+            setTimeout(createSakura, i * 300);
         }
     </script>
 </body>
